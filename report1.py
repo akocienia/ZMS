@@ -2,6 +2,7 @@
 
 path = r'C:\Users\Alicja Kocieniewska\Documents\Uczelnia\ZMS'
 
+
 import csv
 import numpy as np
 import scipy as sc
@@ -21,8 +22,6 @@ plt.bar(list(damages.keys()),
         list(damages.values()))
 plt.title("Wykres słupkowy przedstawiający liczbę szkód o określonej wielkości")
 plt.show()
-
-#plt.savefig('liczebnosc_szkody.png')
 
 # calculating average damage:
 damages_avg = (sum([x * y for x, y in damages.items()]) / 
@@ -55,7 +54,6 @@ sns.distplot(damage_size, kde=True, color = 'purple', hist=False,
              kde_kws={'shade': True,'linewidth': 2})
 plt.title('Funkcja gęstości przybliżona z użyciem jądra normalnego')
 plt.show()
-#plt.savefig('gestosc_szkody.png')
 
 print ("Srednia wielkosc szkod:", round(sc.mean(damage_size))) 
 
@@ -65,7 +63,6 @@ damage_size_ln = sc.log(damage_size)
 plt.hist(damage_size_ln, bins=50, color='lightgreen')
 plt.title('Histogram rozkładu')
 plt.show()
-#plt.savefig('hist_damage_size_ln.png')
 
 sns.distplot(damage_size_ln, kde=True, 
              bins=30, color = 'purple',
@@ -74,20 +71,17 @@ sns.distplot(damage_size_ln, kde=True,
              kde_kws={'linewidth': 4})
 plt.title('Histogram i funkcja gęstości \n przybliżona z użyciem jądra normalnego')
 plt.show() 
-#plt.savefig('hist_density_damage_size_ln.png')
 
 sns.distplot(damage_size_ln, kde=True, color = 'blue', hist=False, 
              kde_kws={'shade': True,'linewidth': 2})
 plt.title('Funkcja gęstości przybliżona z użyciem jądra normalnego')
 plt.show()
-#plt.savefig('density_damage_size_ln.png')
 
 sns.distplot(damage_size_ln, kde=False, bins=20,
              fit=sc.stats.norm, color = 'blue', 
              hist_kws={'edgecolor':'gray'}, fit_kws={"color":"red", 'linewidth': 3})
 plt.title('Porównanie z rozkładem normalnym')
 plt.show()   
-#plt.savefig('damage_size_ln_fitting.png')
 
 #TEST: 
 
@@ -98,7 +92,7 @@ if test2[1] > 0.05:
            "- brak więc podstaw do odrzucenia hipotezy " +
            "o log-normalności rozkładu zmiennej")
 else:
-    print ("należy odrzucic hipotezę zerowa")
+    print ("należy odrzucic hipotezę zerową")
     
     
 # additional parameters:
@@ -165,9 +159,6 @@ def func_call(surplus, contribution, n,
     return [bankruptcy, bankruptcy_prob, result_avg]
 
 
-
-
-
 #SIMULATION
 avg_result = [] 
 contribution_size = []
@@ -229,12 +220,12 @@ plt.savefig("symulacje.pdf")
 #B Maybe it would be worth to attract more customers?
 
 #SIMULATION
-avg_result = [] 
-contribution_size = []
-bankruptcy_prob = []
-ruins_num = [] 
-surplus_level = []
-client_version = []
+avg_result2 = [] 
+contribution_size2 = []
+bankruptcy_prob2 = []
+ruins_num2 = [] 
+surplus_level2 = []
+client_version2 = []
 
 horizon = 2
 n = 100
@@ -246,19 +237,19 @@ for client_num in range(10, 101, 10):
                                    client_num, damages_avg, 
                                    damage_size_ln_avg, damage_size_ln_std, 
                                    horizon)
-            client_version.append(client_num)
-            surplus_level.append(surplus)
-            contribution_size.append(contribution)
-            ruins_num.append(sim_output[0])
-            bankruptcy_prob.append(sim_output[1])
-            avg_result.append(sim_output[2])
+            client_version2.append(client_num)
+            surplus_level2.append(surplus)
+            contribution_size2.append(contribution)
+            ruins_num2.append(sim_output[0])
+            bankruptcy_prob2.append(sim_output[1])
+            avg_result2.append(sim_output[2])
             print("Nadwyzka: ", surplus, "Skladka: ", contribution, 
             "Liczba ruin: ", sim_output[0], "Sredni wynik: ",
             round(sim_output[2]), "bankruptcy_prob: ", sim_output[1])
             
 sns.set_style("whitegrid")
-plt.plot(client_version[0:9], bankruptcy_prob[0:9], color="purple", marker="o")
-plt.xticks(np.arange(min(client_version[0:9]), max(client_version[0:9])+1, 10))
+plt.plot(client_version2[0:9], bankruptcy_prob2[0:9], color="purple", marker="o")
+plt.xticks(np.arange(min(client_version2[0:9]), max(client_version2[0:9])+1, 10))
 plt.ylabel('Prawdopodobienstwo bankructwa')
 plt.xlabel('Oczekiwana liczba klientów')
 plt.title('Wpływ oczekiwanej liczby klientów na prawdopodobieństwo bankrutctwa', fontsize=14)
@@ -267,12 +258,12 @@ plt.show()
 #B How about we start with a higher surplus? 
 
 #SIMULATION
-avg_result = [] 
-contribution_size = []
-bankruptcy_prob = []
-ruins_num = [] 
-surplus_level = []
-client_version = []
+avg_result3 = [] 
+contribution_size3 = []
+bankruptcy_prob3 = []
+ruins_num3 = [] 
+surplus_level3 = []
+client_version3 = []
 
 horizon = 2
 n = 100
@@ -284,23 +275,23 @@ for client_num in [100]:
                                    client_num, damages_avg, 
                                    damage_size_ln_avg, damage_size_ln_std, 
                                    horizon)
-            client_version.append(client_num)
-            surplus_level.append(surplus)
-            contribution_size.append(contribution)
-            ruins_num.append(sim_output[0])
-            bankruptcy_prob.append(sim_output[1])
-            avg_result.append(sim_output[2])
+            client_version3.append(client_num)
+            surplus_level3.append(surplus)
+            contribution_size3.append(contribution)
+            ruins_num3.append(sim_output[0])
+            bankruptcy_prob3.append(sim_output[1])
+            avg_result3.append(sim_output[2])
             print("Nadwyzka: ", surplus, "Skladka: ", contribution, 
             "Liczba ruin: ", sim_output[0], "Sredni wynik: ",
             round(sim_output[2]), "bankruptcy_prob: ", sim_output[1])
 
 
-area = [i * 0.02 for i in surplus_level]
+area = [i * 0.02 for i in surplus_level3]
 sns.set_style("whitegrid")
-plt.scatter(contribution_size[:7], bankruptcy_prob[:7], c=contribution_size[:7], s=area[:7], cmap=plt.cm.hsv, alpha = 0.5, label = '10000')
-plt.scatter(contribution_size[7:14], bankruptcy_prob[7:14], c=contribution_size[7:14], s=area[7:14], cmap=plt.cm.hsv, alpha = 0.5, label = '15000')
-plt.scatter(contribution_size[14:21], bankruptcy_prob[14:21], c=contribution_size[14:21], s=area[14:21], cmap=plt.cm.hsv, alpha = 0.5, label = '30000')
-plt.xticks(np.arange(min(contribution_size), max(contribution_size)+1, 100))
+plt.scatter(contribution_size3[:7], bankruptcy_prob3[:7], c=contribution_size3[:7], s=area[:7], cmap=plt.cm.hsv, alpha = 0.5, label = '10000')
+plt.scatter(contribution_size3[7:14], bankruptcy_prob3[7:14], c=contribution_size3[7:14], s=area[7:14], cmap=plt.cm.hsv, alpha = 0.5, label = '15000')
+plt.scatter(contribution_size3[14:21], bankruptcy_prob3[14:21], c=contribution_size3[14:21], s=area[14:21], cmap=plt.cm.hsv, alpha = 0.5, label = '30000')
+plt.xticks(np.arange(min(contribution_size3), max(contribution_size3)+1, 100))
 plt.ylabel('Prawdopodobienstwo bankructwa')
 plt.xlabel('Wysokosć składki')
 plt.title('Wpływ nadwyżki początkowej na prawdopodobieństwo bankructwa', fontsize = 14)
@@ -308,7 +299,7 @@ plt.legend(loc='best',bbox_to_anchor=(1, 1), title = 'Nadwyżka:', facecolor = "
            title_fontsize=11, edgecolor = "black", borderaxespad = 0, borderpad =1.75, labelspacing  =1.25, shadow=True)
 plt.show()
 
-to_map = pd.DataFrame({"Nadwyżka": surplus_level,"Składka": contribution_size, "Bankructwo": bankruptcy_prob})
+to_map = pd.DataFrame({"Nadwyżka": surplus_level3,"Składka": contribution_size3, "Bankructwo": bankruptcy_prob3})
 to_map = pd.pivot_table(to_map, index='Nadwyżka', columns='Składka', values='Bankructwo', aggfunc=np.sum)
 plt.figure(figsize=(10, 5))
 sns.heatmap(to_map, annot=True, annot_kws={"size": 12}, cmap="BuPu", linewidths=0.5)
@@ -335,7 +326,8 @@ def model_random (client_num, damage_size_ln_avg,
     contribution_list = [0] * client_num
     for k in range(client_num):
         contribution_list[k] = sc.random.randint(500, 2000)
-    contribution = sc.mean(contribution_list)
+    contribution = sc.mean(contribution_list)    #here is the main difference - 
+                                                 #random contribution for each client
     
     calendar_out = [0]*(365*horizon) 
     for k in range(client_num):
@@ -395,9 +387,9 @@ surplus = 10000
 sim_output = func_call_random(surplus, n, client_num, damages_avg, 
                        damage_size_ln_avg, damage_size_ln_std, horizon)
 contribution_track = sim_output[3]
-ruins_num = sim_output[0]
-bankruptcy_prob = sim_output[1]
-avg_result = sim_output[2]
+ruins_num4 = sim_output[0]
+bankruptcy_prob4 = sim_output[1]
+avg_result4 = sim_output[2]
 con_avg = []
 for k in contribution_track:
     con_avg.append(sc.mean(k))
@@ -405,25 +397,29 @@ for k in contribution_track:
 contribution_track = sum(contribution_track, []) #unlist the list 
 sc.mean(contribution_track)
     
-male = []
-duze = []
+below = []
+above = []
+
 for k in contribution_track[:100]:
     if k > np.mean(contribution_track[:100]):
-        duze.append(k)
+        above.append(k)
     else: 
-        male.append(k)
+        below.append(k)
         
-male.sort()
-duze.sort()
+under.sort()
+below.sort()
+
 plt.figure(figsize=(15, 5))
-plt.bar(range(50), male, color = 'green', width = 2, linewidth = 2, edgecolor = 'black')
-plt.bar(range(50, 100), duze, color = 'red', width = 2, linewidth = 2, edgecolor = 'black')
+plt.bar(range(50), below, color = 'green', width = 2, linewidth = 2, edgecolor = 'black')
+plt.bar(range(50, 100), above, color = 'red', width = 2, linewidth = 2, edgecolor = 'black')
 plt.xticks(np.arange(0, 101, 2), rotation = 45)
 plt.yticks(np.arange(0, 2001, 200))
 plt.axhline(np.mean(contribution_track[:100]), color='blue', linewidth=4)
 plt.xlabel('Numer klienta')
 plt.ylabel("Wysokosc składki")
 plt.title('Przykładowa iteracja przy losowanej składce', fontsize = 14)
+plt.show()
+
 
 sns.set_style("whitegrid")
 plt.figure(figsize=(15, 5))
@@ -432,6 +428,8 @@ plt.axhline(np.mean(contribution_track[:100]), color='red', linewidth=4)
 plt.xlabel('Numer klienta')
 plt.ylabel("Wysokosc składki")
 plt.title('Przykładowa iteracja przy losowanej składce', fontsize = 14)
+plt.show()
+
 min(contribution_track[:100])
 max(contribution_track[:100])
 
@@ -439,7 +437,10 @@ plt.hist(con_avg, linewidth = 2, edgecolor = 'black', color = 'orange', bins=10)
 plt.xlabel('Składka')
 plt.ylabel("Liczba klientów")
 plt.title('Histogram rozkładu składek w symulacji', fontsize = 14)
-np.max(con_avg)
+plt.show()
+
+np.min(con_avg)
+np.max(con_avg) #out of interest ;) 
 
 sns.distplot(con_avg, norm_hist=True, kde=True, bins=10, color = 'purple',
              hist_kws={'edgecolor':'black'},
@@ -447,6 +448,8 @@ sns.distplot(con_avg, norm_hist=True, kde=True, bins=10, color = 'purple',
 plt.xlabel('Składka')
 plt.ylabel("Udział procentowy")
 plt.title('Przybliżony rozkład składek w symulacji', fontsize = 14)
+plt.show()
+
 test_if_normal = kstest(con_avg, sc.stats.norm.cdf, 
                args = (sc.mean(con_avg), sc.std(con_avg)))
 if test_if_normal[1] > 0.05:
