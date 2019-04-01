@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.stats.stats import kstest
 import pandas as pd
+from scipy.misc import factorial
+from scipy.optimize import curve_fit
+from scipy.stats import norm
+
 
 damages = {0 : 3437, 
                 1 : 522, 
@@ -18,14 +22,33 @@ damages = {0 : 3437,
                 4 : 0, 
                 5 : 0}
 
-plt.bar(list(damages.keys()), 
-        list(damages.values()))
-plt.title("Wykres słupkowy przedstawiający liczbę szkód o określonej wielkości")
+y = list(damages.values())
+x = list(damages.keys())
+def poisson(k, lamb, scale):
+    return scale*(lamb**k/factorial(k))*np.exp(-lamb)
+parameters, cov_matrix = curve_fit(poisson, x, y, p0=[10., 10.])
+x_new = np.linspace(x[0], x[-1], 50)
+
+print(round(parameters[0],4))
+print(round(parameters[1],4))
+
+fig = plt.figure()
+ax = plt.subplot(111)
+ax.bar(list(damages.keys()), 
+        list(damages.values()),color = "darkmagenta")
+ax.plot(x_new, poisson(x_new, *parameters), color='palevioletred',linewidth=4.0)
+plt.title("Rozkład liczby szkód") #krotki kluvx=wartosc
+plt.xlabel("Liczba szkód")
+plt.ylabel("Liczba polis")
 plt.show()
 
 # calculating average damage:
 damages_avg = (sum([x * y for x, y in damages.items()]) / 
                         sum(damages.values()))
+
+print(damages_avg)
+print(522/sum(damages.values())*100)
+print(3437/sum(damages.values())*100)
 
 # checking if Poisson:
 poisson_test = [sc.stats.poisson.pmf(i, damages_avg) * 
@@ -47,6 +70,14 @@ with open(path+'\\szkody.txt','r') as csvfile:
     reader = csv.reader (csvfile, delimiter=";")
     for row in reader:
         damage_size.append(int(row[1]))
+        
+fig = plt.figure()
+ax = plt.subplot(111) 
+ax.hist(damage_size, bins=50, color='darkred')
+plt.title("Rozkład wartości szkód") #krotki kluvx=wartosc
+plt.xlabel("Wartość szkód")
+plt.ylabel("Liczba szkód")
+print ("Srednia wielkosc szkod:", round(sc.mean(damage_size))) 
 
 plt.hist(damage_size, bins=50)
 plt.show()
@@ -63,6 +94,28 @@ damage_size_ln = sc.log(damage_size)
 plt.hist(damage_size_ln, bins=50, color='lightgreen')
 plt.title('Histogram rozkładu')
 plt.show()
+
+damage_size_ln.sort()
+s = np.std(damage_size_ln)
+m = np.mean(damage_size_ln)
+
+x = []
+for i in range(0,60):
+    x.append(5+0.1*i)
+#x = x[1:len(x)]
+y = [0]*60
+for i in range(0,len(damage_size_ln)):
+    for j in range(0,len(x)-1):
+        if damage_size_ln[i] > x[j] and damage_size_ln[i] < x[j+1]:
+            y[j] += 1
+fig = plt.figure()
+ax = plt.subplot(111)            
+ax.hist(damage_size_ln, bins=50, color='purple')
+ax.plot(x,norm.pdf(x,m,s)*(max(y)/max(norm.pdf(x,m,s))), color='palevioletred',linewidth=4.0)
+plt.title("Rozkład zlogarytmizowanych wartości szkód") #krotki kluvx=wartosc
+plt.xlabel("Zlogarytmizowana wartość szkód")
+plt.ylabel("Liczba szkód")
+plt.show()        
 
 sns.distplot(damage_size_ln, kde=True, 
              bins=30, color = 'purple',
@@ -155,8 +208,9 @@ def func_call(surplus, contribution, n,
         if result[seed] > 0:
             positive_result.append(result[seed])
     result_avg = sc.mean(positive_result)
+    result_std = sc.std(positive_result)
     bankruptcy_prob = bankruptcy / n
-    return [bankruptcy, bankruptcy_prob, result_avg]
+    return [bankruptcy, bankruptcy_prob, result_avg, result_std]
 
 
 #SIMULATION
@@ -166,6 +220,8 @@ bankruptcy_prob = []
 ruins_num = [] 
 surplus_level = []
 simulation_num = []
+result_dev =[]
+
 
 client_num = 100
 horizon = 2
@@ -183,9 +239,17 @@ for n in [25, 150, 1000, 3000]:
             ruins_num.append(sim_output[0])
             bankruptcy_prob.append(sim_output[1])
             avg_result.append(sim_output[2])
+            result_dev.append(sim_output[3])
             print("Nadwyzka: ", surplus, "Skladka: ", contribution, 
             "Liczba ruin: ", sim_output[0], "Sredni wynik: ",
-            round(sim_output[2]), "bankruptcy_prob: ", sim_output[1])
+            round(sim_output[2]), "Odchylenie: ", round(sim_output[3]),
+            "bankruptcy_prob: ", sim_output[1])
+            
+#plt.plot(contribution_size, bankruptcy_prob, color='darkmagenta')
+#plt.ylabel('Prawdopodobieństwo bankructwa')
+#plt.xlabel('Wysokość składki')
+#plt.title("Prawdopodobieństwo bankructwa w zależności od wysokości składki")
+#plt.show()
             
 #Plotting 
             
@@ -406,7 +470,7 @@ for k in contribution_track[:100]:
     else: 
         below.append(k)
         
-under.sort()
+above.sort()
 below.sort()
 
 plt.figure(figsize=(15, 5))
@@ -435,7 +499,7 @@ max(contribution_track[:100])
 
 plt.hist(con_avg, linewidth = 2, edgecolor = 'black', color = 'orange', bins=10)
 plt.xlabel('Składka')
-plt.ylabel("Liczba klientów")
+plt.ylabel("Liczebno")
 plt.title('Histogram rozkładu składek w symulacji', fontsize = 14)
 plt.show()
 
