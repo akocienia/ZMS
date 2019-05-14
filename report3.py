@@ -9,7 +9,7 @@ def model(horizon, number_of_alpacas, number_of_water_spots, setup):
     # number of 15min periods 
     # during the day only - alpacas don't drink at night - they sleep :)
     
-    checkpoints = (horizon * 24 * 4) / 2
+    checkpoints = int((horizon * 24 * 4) / 2)
     
     # starting location of all our alpacas (they are on the circle)
     alpacas_loc_start = [[random.random(), random.randint(0, 360)] \
@@ -57,6 +57,12 @@ def model(horizon, number_of_alpacas, number_of_water_spots, setup):
         if checkpoint % 12 == 0:
             temperature = random.randint(20, 30)
             
+        # every day we update their alpacoutility 
+        
+        if checkpoint % 4*12 == 0:
+            alpaca_power += 100 * number_of_alpacas
+            
+            
         # and we update the level of alpacas' thirst
         # it depends on temperature and distance and is based on gamma distribution
             
@@ -71,37 +77,36 @@ def model(horizon, number_of_alpacas, number_of_water_spots, setup):
         drinking_time = []
         
         # we check if alpacas need to go to the water spot
-        
-        for i in alpacas_water_need:
-            if setup == "lightbulb":
-                # location of 4 water spots in lightbulb setup 
-                water_spot = [0, -1]
-                # if alpaca is thirsty
-                if i > 1:
-                # it makes a trip to water spot
-                    water_trip = [sqrt((water_spot[0] - x[alpaca])**2 + (water_spot[1] - y[alpaca])**2) \
-                     for alpaca in range(number_of_alpacas)]
-                # and belongs to thirsty alpacas team 
-                    thirsty_alpacas += 1
-                # it changes its location to water spot 
-                    alpacas_new_location[i] = water_spot
-                # and it's thirst increase (cause it needs to go to new spot)
-                    increase_after_trip = np.random.gamma(temperature) * 0.01 * water_trip[i] 
-                    alpacas_water_need[i] +=  increase_after_trip
-                # duration of drinking depends of how thirsty the alpaca is
-                    drinking_time[i] = 5 * alpacas_water_need[i] 
-                    alpacas_water_need[i] = 0
-        # if there are more alpacas in the queue, they fight 
-        # and loose some alpaca power points 
-                if thirsty_alpacas > number_of_water_spots:
-                    alpaca_power -=  ((10 + 10 * thirsty_alpacas) * thirsty_alpacas)/2
-                    drinking_time.sort()
-                    # thirsty alpacas don't have power to fight for better place in queue
-                    alpaca_power -= sum(drinking_time[:5])
-                    thirsty_alpacas -= 4
-                    # do dokończenia kejs z odejmowaniem punktów za czas oczekiwania
-            if setup == "hedgehog":
-                pass
+        if setup == "lightbulb":
+            for i in range(number_of_alpacas):
+                    # location of 4 water spots in lightbulb setup 
+                    water_spot = [0, -1]
+                    # if alpaca is thirsty
+                    if alpacas_water_need[i] > 1:
+                    # it makes a trip to water spot
+                        water_trip = sqrt((water_spot[0] - x[i])**2 + (water_spot[1] - y[i])**2)
+                    # and belongs to thirsty alpacas team 
+                        thirsty_alpacas += 1
+                    # it changes its location to water spot 
+                        alpacas_new_location[i] = water_spot
+                    # and it's thirst increase (cause it needs to go to new spot)
+                        increase_after_trip = np.random.gamma(temperature) * 0.01 * water_trip 
+                        alpacas_water_need[i] +=  increase_after_trip
+                    # duration of drinking depends of how thirsty the alpaca is
+                        drinking_time.append(5 * alpacas_water_need[i])
+                        alpacas_water_need[i] = 0
+            # if there are more alpacas in the queue, they fight 
+            # and loose some alpaca power points 
+            if thirsty_alpacas > number_of_water_spots:
+                alpaca_power -=  ((10 + 10 * thirsty_alpacas) * thirsty_alpacas)/2
+                drinking_time.sort()
+                # thirsty alpacas don't have power to fight for better place in queue
+                #alpaca_power -= sum(drinking_time[:thirsty_alpacas+1])
+                #thirsty_alpacas -= number_of_water_spots
+            #thirsty_alpacas = 0
+        # do dokończenia kejs z odejmowaniem punktów za czas oczekiwania
+        if setup == "hedgehog":
+            pass
             
         # that needs to be at the end of the big loop (so that we don't forget)            
         alpacas_loc_start = alpacas_new_location
@@ -112,7 +117,7 @@ def model(horizon, number_of_alpacas, number_of_water_spots, setup):
                 
                     
         
-        
+
             
         
         
